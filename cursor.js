@@ -8,7 +8,6 @@ const simpleHash = str => {
     return new Uint32Array([hash])[0].toString(36);
   };
 
-
 class Cursor extends HTMLElement
 {
     constructor()
@@ -16,7 +15,12 @@ class Cursor extends HTMLElement
         super();
 
         this.hash = "cursor-" + simpleHash(Date.now().toString());
+        this.customCSS = " ";
+
         this.attachShadow({mode: 'open'});
+        
+        this.worker = new Worker("/assets/worker.js");
+        this.worker.addEventListener("message", message => this.handleWorkerMessage(message))
 
         this.cursorAttributes = {
             "width": 25,
@@ -28,8 +32,6 @@ class Cursor extends HTMLElement
             "cursor-smoothing-position": 0.1,
             "cursor-hovers": "",
         }
-
-        this.customCSS = "";
 
         this.cursorElement = document.createElement("div");
         this.cursorElement.setAttribute('class', this.hash);
@@ -137,34 +139,21 @@ class Cursor extends HTMLElement
             this.hash = newValue;
 
             // Inject Custom CSS
-            
-            let customCSS = {};
-            let customPropCount = 0;
+            let s = Object.values(document.styleSheets);
 
-            Object.values(document.styleSheets).map(stylesheet => {
-                Object.values(stylesheet.cssRules).map(selector => {
-                    if(selector.selectorText.slice(1) == this.hash)
-                    {
-                        customCSS = {...customCSS, ...selector.style};
-                        customPropCount += selector.styleMap.size;
-                    }
-                })
+            s.map(stylesheet => {
+                this.worker.postMessage({ message: "updateCSS", hash: this.hash, stylesheet: Array.from(stylesheet.cssRules).filter(rule => rule.selectorText.slice(1) == this.hash).map(sheet => sheet.cssText) })
             })
-
-            for ( let i = 0; i < customPropCount; ++i) delete customCSS[i];
-            console.log(customCSS)
-            
-            let entries = Object.entries(customCSS);
-
-            for(let key = 0; key < entries.length; key++)
-            {
-                if(entries[key][1].length > 0) this.customCSS += `${entries[key][0].replace(/[A-Z]/g, m => "-" + m.toLowerCase())}: ${entries[key][1]};\n`
-            }
-            console.log(this.customCSS)
         }
 
         console.log(`Changed ${name} from \`${oldValue}\` to \`${newValue}\``)
         this.cursorAttributes[name] = newValue;
+
+        this.updateCSS();
+    }
+
+    updateCSS()
+    {
 
         this.styles.textContent = `
             .${this.hash} {
@@ -181,6 +170,23 @@ class Cursor extends HTMLElement
                 ${this.customCSS}
             }
         `
+    }
+
+    handleWorkerMessage(message)
+    {
+        console.log(`Received message \`${message.data.case}\``);
+        switch (message.data.case)
+        {
+            case "updatedCSS":
+                this.customCSS = message.data.css;
+                this.updateCSS();
+                break;
+            case "closeWorker":
+                this.worker.terminate();
+                break;
+            default:
+                console.log(`\`${message.data.case}\` not yet implemented!`)
+        }
     }
 }
 
