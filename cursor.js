@@ -152,7 +152,6 @@ class Cursor extends HTMLElement
             })
 
             for ( let i = 0; i < customPropCount; ++i) delete customCSS[i];
-            console.log(customCSS)
             
             let entries = Object.entries(customCSS);
 
@@ -160,7 +159,6 @@ class Cursor extends HTMLElement
             {
                 if(entries[key][1].length > 0) this.customCSS += `${entries[key][0]}: ${entries[key][1]};\n`
             }
-            console.log(this.customCSS)
         }
 
         console.log(`Changed ${name} from \`${oldValue}\` to \`${newValue}\``)
