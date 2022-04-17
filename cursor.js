@@ -70,7 +70,7 @@ class Cursor extends HTMLElement
                 height: ${this.cursorAttributes.height}px;
                 border-radius: 50%;
 
-                background: ${this.cursorAttributes["cursor-color"]};
+                background-color: ${this.cursorAttributes["cursor-color"]};
                 outline: ${this.cursorAttributes["cursor-outline-thickness"]}px ${this.cursorAttributes["cursor-outline-style"]} ${this.cursorAttributes["cursor-outline-color"]}
             }
         `
@@ -89,7 +89,7 @@ class Cursor extends HTMLElement
   
     move(e)
     {
-        this.cursorElement.style.opacity = 1;
+        // this.cursorElement.style.opacity = 1;
         [this.cursor.position.x, this.cursor.position.y] = [e.clientX, e.clientY];
 
         window.removeEventListener("mousemove", this.move);
@@ -152,13 +152,15 @@ class Cursor extends HTMLElement
             })
 
             for ( let i = 0; i < customPropCount; ++i) delete customCSS[i];
+            console.log(customCSS)
             
             let entries = Object.entries(customCSS);
 
             for(let key = 0; key < entries.length; key++)
             {
-                if(entries[key][1].length > 0) this.customCSS += `${entries[key][0]}: ${entries[key][1]};\n`
+                if(entries[key][1].length > 0) this.customCSS += `${entries[key][0].replace(/[A-Z]/g, m => "-" + m.toLowerCase())}: ${entries[key][1]};\n`
             }
+            console.log(this.customCSS)
         }
 
         console.log(`Changed ${name} from \`${oldValue}\` to \`${newValue}\``)
@@ -173,7 +175,7 @@ class Cursor extends HTMLElement
                 height: ${this.cursorAttributes.height}px;
                 border-radius: 50%;
 
-                background: ${this.cursorAttributes["cursor-color"]};
+                background-color: ${this.cursorAttributes["cursor-color"]};
                 outline: ${this.cursorAttributes["cursor-outline-thickness"]}px ${this.cursorAttributes["cursor-outline-style"]} ${this.cursorAttributes["cursor-outline-color"]};
 
                 ${this.customCSS}
