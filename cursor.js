@@ -29,6 +29,8 @@ class Cursor extends HTMLElement
             "cursor-hovers": "",
         }
 
+        this.customCSS = "";
+
         this.cursorElement = document.createElement("div");
         this.cursorElement.setAttribute('class', this.hash);
         this.cursorElement.setAttribute('tabindex', -1);
@@ -87,7 +89,6 @@ class Cursor extends HTMLElement
   
     move(e)
     {
-        console.log(e)
         this.cursorElement.style.opacity = 1;
         [this.cursor.position.x, this.cursor.position.y] = [e.clientX, e.clientY];
 
@@ -116,6 +117,7 @@ class Cursor extends HTMLElement
 
     static get observedAttributes() {
         return [
+            "fixed-class",
             "width",
             "height",
             "cursor-color",
@@ -129,7 +131,39 @@ class Cursor extends HTMLElement
 
     attributeChangedCallback(name, oldValue, newValue)
     {
-        console.log(`Changed ${name} from ${oldValue} to ${newValue}`)
+        if(name == "fixed-class")
+        {
+            this.cursorElement.className = newValue;
+            this.hash = newValue;
+
+            // Inject Custom CSS
+            
+            let customCSS = {};
+            let customPropCount = 0;
+
+            Object.values(document.styleSheets).map(stylesheet => {
+                Object.values(stylesheet.cssRules).map(selector => {
+                    if(selector.selectorText.slice(1) == this.hash)
+                    {
+                        customCSS = {...customCSS, ...selector.style};
+                        customPropCount += selector.styleMap.size;
+                    }
+                })
+            })
+
+            for ( let i = 0; i < customPropCount; ++i) delete customCSS[i];
+            console.log(customCSS)
+            
+            let entries = Object.entries(customCSS);
+
+            for(let key = 0; key < entries.length; key++)
+            {
+                if(entries[key][1].length > 0) this.customCSS += `${entries[key][0]}: ${entries[key][1]};\n`
+            }
+            console.log(this.customCSS)
+        }
+
+        console.log(`Changed ${name} from \`${oldValue}\` to \`${newValue}\``)
         this.cursorAttributes[name] = newValue;
 
         this.styles.textContent = `
@@ -142,7 +176,9 @@ class Cursor extends HTMLElement
                 border-radius: 50%;
 
                 background: ${this.cursorAttributes["cursor-color"]};
-                outline: ${this.cursorAttributes["cursor-outline-thickness"]}px ${this.cursorAttributes["cursor-outline-style"]} ${this.cursorAttributes["cursor-outline-color"]}
+                outline: ${this.cursorAttributes["cursor-outline-thickness"]}px ${this.cursorAttributes["cursor-outline-style"]} ${this.cursorAttributes["cursor-outline-color"]};
+
+                ${this.customCSS}
             }
         `
     }
