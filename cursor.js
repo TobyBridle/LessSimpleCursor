@@ -8,18 +8,48 @@ const simpleHash = str => {
     return new Uint32Array([hash])[0].toString(36);
   };
 
+const workerBlob = new Blob(['(',
+    function(){
+        this.updateCSS = async (data) => {
+            let customCSS = {};
+            data.stylesheet.forEach(stylesheet => {
+                rules = stylesheet.slice(data.hash.length + 1).trim().slice(1, -1).trim().split(";");
+                rules.forEach(rule => {
+                    [property, value] = rule.length > 0 ? rule.split(":") : ["", ""];
+                    if(property.length > 0 && value.length > 0) customCSS[property.trim()] = value.trim();
+                })
+            })
+            self.postMessage({case: "updatedCSS", css: Object.entries(customCSS).flatMap(m => m.join(": ")).join(";\n\t\t\t\t")+";" });
+        }
+
+        this.onmessage = function(e) {
+            switch(e.data.message)
+            {
+                case "updateCSS":
+                    updateCSS(e.data);
+                    this.self.postMessage({ case: "closeWorker" });
+                    break;
+                default:
+                    console.log("Case not implemented!")
+            }
+        }
+    }.toString(),
+  ')()'
+], { type: "text/javascript" })
+
 class Cursor extends HTMLElement
 {
     constructor()
     {
         super();
-
         this.hash = "cursor-" + simpleHash(Date.now().toString());
         this.customCSS = " ";
 
         this.attachShadow({mode: 'open'});
         
-        this.worker = new Worker("https://cdn.jsdelivr.net/gh/TobyBridle/SuperSimpleCursor/worker.min.js");
+        this.worker = new Worker(window.URL.createObjectURL(workerBlob));
+        // this.worker.onmessage = (e) => handleWorkerMessage(e);
+        // this.worker.updateCSS = (message) => workerUpdateCSS(message);
         this.worker.addEventListener("message", message => this.handleWorkerMessage(message))
 
         this.cursorAttributes = {
@@ -91,7 +121,6 @@ class Cursor extends HTMLElement
   
     move(e)
     {
-        // this.cursorElement.style.opacity = 1;
         [this.cursor.position.x, this.cursor.position.y] = [e.clientX, e.clientY];
 
         window.removeEventListener("mousemove", this.move);
