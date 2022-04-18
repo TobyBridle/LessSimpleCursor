@@ -19,7 +19,7 @@ class Cursor extends HTMLElement
 
         this.attachShadow({mode: 'open'});
         
-        this.worker = new Worker("/worker.js");
+        this.worker = new Worker("https://cdn.jsdelivr.net/gh/TobyBridle/SuperSimpleCursor/worker.min.js");
         this.worker.addEventListener("message", message => this.handleWorkerMessage(message))
 
         this.cursorAttributes = {
