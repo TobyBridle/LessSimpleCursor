@@ -14,8 +14,8 @@ You'll need to import the `cursor.min.js` using jsDelivr. This can be done with 
 ...
 ```
 
-This script will then import one itself - `worker.min.js`. The worker is used for handling custom styles defined
-in stylesheets (either `<link>` or `<style>` will work).
+~~This script will then import one itself - `worker.min.js`. The worker is used for handling custom styles defined
+in stylesheets (either `<link>` or `<style>` will work).~~
 
 To get the cursor to appear, just place a `<custom-cursor></custom-cursor>` element anywhere. A cool feature is
 that more than one cursor can be used per page, due to the fact that the script generates a unique ID (unless specified otherwise)
