@@ -2,7 +2,7 @@
 Super Simple Cursor made to test the WebComponents feature
 
 ## CDN
-[jsDelivr minified cursor](https://cdn.jsdelivr.net/gh/TobyBridle/SuperSimpleCursor@8ecf010a21b0bce6b3c42c32255b4f2f65a5f9a9/cursor.min.js)
+[jsDelivr minified cursor](https://cdn.jsdelivr.net/gh/TobyBridle/SuperSimpleCursor@4d4309d440fdb95bd5c45132a5e8f10bc92edd15/cursor.min.js)
 
 # How to use?
 You'll need to import the `cursor.min.js` using jsDelivr. This can be done with a script tag placed inside the `<head>`, as shown below:
@@ -13,9 +13,6 @@ You'll need to import the `cursor.min.js` using jsDelivr. This can be done with 
 </head>
 ...
 ```
-
-~~This script will then import one itself - `worker.min.js`. The worker is used for handling custom styles defined
-in stylesheets (either `<link>` or `<style>` will work).~~
 
 To get the cursor to appear, just place a `<custom-cursor></custom-cursor>` element anywhere. A cool feature is
 that more than one cursor can be used per page, due to the fact that the script generates a unique ID (unless specified otherwise)
@@ -86,6 +83,9 @@ would append **all** properties which would result in large stylesheets which we
 ---
 
 # Handling Hovers
+
+## Basic Hover Customisation
+
 With the new addition of hover control on 20/04/2022, the cursor's hover state can now be controlled. Changing transform properties is very limited, with only the attribute `data-cursor-scale` working to change the scale. However, using CSS for other properties works fine. To customise the hover, there are a few things that need to be done.
 
 1. Define the classname for hover elements
@@ -109,5 +109,37 @@ For example, to change the colour of the cursor to red whilst hovering on a butt
 ...
 ```
 
-Changing the state of the cursor differently depending on the targetted element has not yet been implemented; however, it will be implemented
-within the next version or two at most.
+~~Changing the state of the cursor differently depending on the targetted element has not yet been implemented; however, it will be implemented
+within the next version or two at most.~~
+
+## Advanced Hover Customisation
+
+To change the cursor class depending on the element that it is hovering, the element will need to specify a hover class. This is done
+using the `data-cursor-hover-class` attribute on the element. The class that it uses must be declared within a stylesheet that is
+declared cursor only (add `data-cursor-only` to the corresponding `<style>` or `<link>` tag). **Warning: __All__ of the styles within
+this stylesheet will be appended to the CSS within the Shadow DOM. Try to minimise the extra CSS by having a single file for all of the hover
+classes (for example).**
+
+Example of Advanced Hover Customisation:
+```html
+...
+<head>
+  <style data-cursor-only>
+  .cursor-button-red {
+    background: red;
+  }
+    
+  .cursor-button-green {
+    background: green;
+  }
+</style>
+</head>
+<body>
+  <!-- You must have a fixed class for this to work, even if the class does not exist -->
+  <custom-cursor fixed-class="_" cursor-hovers="cursor-button-hover" cursor-color="yellow"></custom-cursor>
+  
+  <button class="cursor-button-hover" data-cursor-hover-class="cursor-button-red">I turn the cursor red!</button>
+  <button class="cursor-button-hover" data-cursor-hover-class="cursor-button-green">I turn the cursor green!</button>
+</body>
+...
+```
