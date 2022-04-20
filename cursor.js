@@ -10,7 +10,7 @@ const simpleHash = str => {
 
 const workerBlob = new Blob(['(',
     function(){
-        this.updateCSS = async (data) => {
+        this.updateCSS = data => {
             let customCSS = {};
             data.stylesheet.forEach(stylesheet => {
                 rules = stylesheet.slice(data.hash.length + 1).trim().slice(1, -1).trim().split(";");
@@ -21,6 +21,18 @@ const workerBlob = new Blob(['(',
             })
             self.postMessage({case: "updatedCSS", css: Object.entries(customCSS).flatMap(m => m.join(": ")).join(";\n\t\t\t\t")+";" });
         }
+        
+        this.updateHoverCSS = data => {
+            let customCSS = {};
+            data.stylesheet.forEach(stylesheet => {
+                rules = stylesheet.slice(data.hash.length + 1).trim().slice(1, -1).trim().split(";");
+                rules.forEach(rule => {
+                    [property, value] = rule.length > 0 ? rule.split(":") : ["", ""];
+                    if(property.length > 0 && value.length > 0) customCSS[property.trim()] = value.trim();
+                })
+            })
+            self.postMessage({case: "updatedHoverCSS", css: Object.entries(customCSS).flatMap(m => m.join(": ")).join(";\n\t\t\t\t")+";", ruleName: data.ruleName });
+        }
 
         this.onmessage = function(e) {
             switch(e.data.message)
@@ -29,6 +41,9 @@ const workerBlob = new Blob(['(',
                     updateCSS(e.data);
                     this.self.postMessage({ case: "closeWorker" });
                     break;
+                case "updateHoverCSS":
+                    updateHoverCSS(e.data);
+                    this.self.postMessage({ case: "closeWorker" });
                 default:
                     console.log("Case not implemented!")
             }
@@ -43,7 +58,7 @@ class Cursor extends HTMLElement
     {
         super();
         this.hash = "cursor-" + simpleHash(Date.now().toString());
-        this.customCSS = " ";
+        this.customCSS = { standard: "", hover: "" };
 
         this.attachShadow({mode: 'open'});
         
@@ -60,7 +75,7 @@ class Cursor extends HTMLElement
             "cursor-outline-style": "solid",
             "cursor-outline-color": "rgba(255, 255, 100, 0.5)",
             "cursor-smoothing-position": 0.1,
-            "cursor-hovers": "",
+            "cursor-hover": "",
         }
 
         this.cursorElement = document.createElement("div");
@@ -156,12 +171,13 @@ class Cursor extends HTMLElement
             "cursor-outline-style",
             "cursor-outline-color",
             "cursor-smoothing-position",
-            "cursor-hovers",
+            "cursor-hover",
         ]
     }
 
     attributeChangedCallback(name, oldValue, newValue)
     {
+        this.cursorElement.classList.remove("cursor-hover-active");
         if(name == "fixed-class")
         {
             this.cursorElement.className = newValue;
@@ -172,6 +188,19 @@ class Cursor extends HTMLElement
 
             s.map(stylesheet => {
                 this.worker.postMessage({ message: "updateCSS", hash: this.hash, stylesheet: Array.from(stylesheet.cssRules).filter(rule => rule?.selectorText == '.' + this.hash).map(sheet => sheet.cssText) })
+            })
+        }
+        
+        if(name == "cursor-hover")
+        {
+            this.cursorElement.classList.add("cursor-hover-active");
+            
+            // Inject Custom CSS for the Hover CSS
+            let s = Object.values(document.styleSheets);
+
+            s.map(stylesheet => {
+                sheet = Array.from(stylesheet.cssRules).filter(rule => rule?.selectorText == '.' + this.hash && rule?.selectorText.includes(":hover")));
+                this.worker.postMessage({ message: "updateHoverCSS", hash: this.hash, stylesheet:  sheet.map(stylesheet => stylesheet.cssText), ruleName: sheet.map(styleshet => stylesheet?.selectorText) });
             })
         }
 
@@ -198,7 +227,14 @@ class Cursor extends HTMLElement
                 
                 pointer-events: none;
                 
-                ${this.customCSS}
+                ${this.customCSS.standard}
+            }
+            
+            ${this.cursorAttributes["cursor-hover"].map(hover => {
+                `.${hover} {
+                        ${this.customCSS.hover}
+                    }`
+                }
             }
         `
     }
@@ -209,7 +245,11 @@ class Cursor extends HTMLElement
         switch (message.data.case)
         {
             case "updatedCSS":
-                this.customCSS = message.data.css;
+                this.customCSS.standard = message.data.css;
+                this.updateCSS();
+                break;
+            case "updatedHoverCSS":
+                this.customCSS.hover = message.data.css;
                 this.updateCSS();
                 break;
             case "closeWorker":
