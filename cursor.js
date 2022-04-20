@@ -199,7 +199,7 @@ class Cursor extends HTMLElement
             let s = Object.values(document.styleSheets);
 
             s.map(stylesheet => {
-                sheet = Array.from(stylesheet.cssRules).filter(rule => rule?.selectorText == '.' + this.hash && rule?.selectorText.includes(":hover")));
+                sheet = Array.from(stylesheet.cssRules).filter(rule => rule?.selectorText == '.' + this.hash && rule?.selectorText.includes(":hover"));
                 this.worker.postMessage({ message: "updateHoverCSS", hash: this.hash, stylesheet:  sheet.map(stylesheet => stylesheet.cssText), ruleName: sheet.map(styleshet => stylesheet?.selectorText) });
             })
         }
