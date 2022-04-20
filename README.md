@@ -2,7 +2,7 @@
 Super Simple Cursor made to test the WebComponents feature
 
 ## CDN
-[jsDelivr minified cursor](https://cdn.jsdelivr.net/gh/TobyBridle/SuperSimpleCursor@a5116aae71b9b4c7267f70fa6dfdf35afe9d8e2f/cursor.min.js)
+[jsDelivr minified cursor](https://cdn.jsdelivr.net/gh/TobyBridle/SuperSimpleCursor@8ecf010a21b0bce6b3c42c32255b4f2f65a5f9a9/cursor.min.js)
 
 # How to use?
 You'll need to import the `cursor.min.js` using jsDelivr. This can be done with a script tag placed inside the `<head>`, as shown below:
@@ -84,3 +84,30 @@ repeatedly (even if in different stylesheets) then only the property at the bott
 would append **all** properties which would result in large stylesheets which were much harder to read.
 
 ---
+
+# Handling Hovers
+With the new addition of hover control on 20/04/2022, the cursor's hover state can now be controlled. Changing transform properties is very limited, with only the attribute `data-cursor-scale` working to change the scale. However, using CSS for other properties works fine. To customise the hover, there are a few things that need to be done.
+
+1. Define the classname for hover elements
+2. Define the `cursor-hover-active` rule in CSS
+
+For example, to change the colour of the cursor to red whilst hovering on a button, we could do the following:
+
+```html
+...
+<head>
+  <style>
+  .cursor-hover-active {
+    background: red;
+  }
+</style>
+</head>
+<body>
+  <custom-cursor cursor-hovers="cursor-button-hover"></custom-cursor>
+  <button class="cursor-button-hover">Click Me!</button>
+</body>
+...
+```
+
+Changing the state of the cursor differently depending on the targetted element has not yet been implemented; however, it will be implemented
+within the next version or two at most.
