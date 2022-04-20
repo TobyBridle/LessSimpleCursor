@@ -41,7 +41,19 @@ const workerBlob = new Blob(
                         .trim()
                         .split(";");
 
+                    const urlRegex =
+                        /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
+                    const checker = new RegExp(urlRegex);
+
                     rules.forEach((rule) => {
+                        if (checker.test(rule)) {
+                            let value = rule.split(":");
+                            customCSS["background"] = value
+                                .slice(1, value.length)
+                                .join(":");
+                            return;
+                        }
+
                         [property, value] =
                             rule.length > 0 ? rule.split(":") : ["", ""];
                         if (property.length > 0 && value.length > 0)
@@ -52,10 +64,9 @@ const workerBlob = new Blob(
                 if (notPosted)
                     self.postMessage({
                         case: "updatedCSS",
-                        css:
-                            Object.entries(customCSS)
-                                .flatMap((m) => m.join(": "))
-                                .join(";\n\t\t\t\t") + ";",
+                        css: Object.entries(customCSS)
+                            .flatMap((m) => m.join(": "))
+                            .join(";\n\t\t\t\t"),
                     });
             };
 
@@ -68,7 +79,20 @@ const workerBlob = new Blob(
                         .slice(1, -1)
                         .trim()
                         .split(";");
+
+                    const urlRegex =
+                        /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
+                    const checker = new RegExp(urlRegex);
+
                     rules.forEach((rule) => {
+                        if (checker.test(rule)) {
+                            let value = rule.split(":");
+                            customCSS["background"] = value
+                                .slice(1, value.length)
+                                .join(":");
+                            return;
+                        }
+
                         [property, value] =
                             rule.length > 0 ? rule.split(":") : ["", ""];
                         if (property.length > 0 && value.length > 0)
@@ -373,11 +397,11 @@ class Cursor extends HTMLElement {
     }
 
     handleHover(element) {
-        element.dataset?.cursorHoverClass?.split(" ").length > 0
-            ? element.dataset?.cursorHoverClass
-                  ?.split(" ")
-                  .forEach((cl) => this.cursorElement.classList.add(cl))
-            : this.cursorElement.classList.add("cursor-hover-active");
+        if (element.dataset?.cursorHoverClass?.split(" ").length > 0)
+            element.dataset?.cursorHoverClass
+                ?.split(" ")
+                .forEach((cl) => this.cursorElement.classList.add(cl));
+        this.cursorElement.classList.add("cursor-hover-active");
 
         this.cursorAttributes.scale = this.lerp(
             this.cursorAttributes.scale,
