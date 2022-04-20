@@ -225,12 +225,13 @@ class Cursor extends HTMLElement {
             this.cursorAttributes["cursor-smoothing-position"]
         );
 
-        for (const c of this.cursorAttributes["cursor-hovers"].split(" ")) {
-            if (this.hoverTarget.classList.contains(c))
-                this.handleHover(this.hoverTarget);
-            else this.resetScale();
-            break;
-        }
+        if (this.cursorAttributes["cursor-hovers"]?.length > 0)
+            for (const c of this.cursorAttributes["cursor-hovers"].split(" ")) {
+                if (this.hoverTarget.classList.contains(c))
+                    this.handleHover(this.hoverTarget);
+                else this.resetScale();
+                break;
+            }
 
         this.cursorElement.style.transform = `scale(${
             this.cursorAttributes.scale
