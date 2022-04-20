@@ -181,6 +181,7 @@ class Cursor extends HTMLElement {
         this.shadowRoot.appendChild(this.styles);
 
         this.hoverTarget = this;
+        this.hoverClasses = [];
 
         window.addEventListener("mousemove", (e) => this.move(e));
         window.requestAnimationFrame((e) => this.render(e));
@@ -210,7 +211,7 @@ class Cursor extends HTMLElement {
     }
 
     render() {
-        this.cursorElement.classList.remove("cursor-hover-active");
+        this.cursorElement.classList = [this.hash, ...this.hoverClasses];
 
         this.cursor.previous.x = this.lerp(
             this.cursor.previous.x,
@@ -371,7 +372,12 @@ class Cursor extends HTMLElement {
     }
 
     handleHover(element) {
-        this.cursorElement.classList.add("cursor-hover-active");
+        element.dataset?.cursorHoverClass?.split(" ").length > 0
+            ? element.dataset?.cursorHoverClass
+                  ?.split(" ")
+                  .forEach((cl) => this.cursorElement.classList.add(cl))
+            : this.cursorElement.classList.add("cursor-hover-active");
+
         this.cursorAttributes.scale = this.lerp(
             this.cursorAttributes.scale,
             parseInt(element.dataset.cursorScale) || 1,
