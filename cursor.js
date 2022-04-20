@@ -171,7 +171,7 @@ class Cursor extends HTMLElement
             let s = Object.values(document.styleSheets);
 
             s.map(stylesheet => {
-                this.worker.postMessage({ message: "updateCSS", hash: this.hash, stylesheet: Array.from(stylesheet.cssRules).filter(rule => rule.selectorText.slice(1) == this.hash).map(sheet => sheet.cssText) })
+                this.worker.postMessage({ message: "updateCSS", hash: this.hash, stylesheet: Array.from(stylesheet.cssRules).filter(rule => rule?.selectorText.slice(1) == this.hash).map(sheet => sheet.cssText) })
             })
         }
 
