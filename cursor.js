@@ -377,8 +377,6 @@ class Cursor extends HTMLElement {
             parseInt(element.dataset.cursorScale) || 1,
             this.cursorAttributes["cursor-smoothing-scale"]
         );
-
-        console.log(this.cursorAttributes.scale);
     }
 
     handleWorkerMessage(message) {
