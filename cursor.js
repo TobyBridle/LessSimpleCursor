@@ -234,7 +234,7 @@ class Cursor extends HTMLElement
                 `.${hover} {
                         ${this.customCSS.hover}
                     }`
-                }
+                })
             }
         `
     }
