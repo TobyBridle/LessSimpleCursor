@@ -230,7 +230,7 @@ class Cursor extends HTMLElement
                 ${this.customCSS.standard}
             }
             
-            ${this.cursorAttributes["cursor-hover"].map(hover => {
+            ${this.cursorAttributes["cursor-hover"].split(" ").map(hover => {
                 `.${hover} {
                         ${this.customCSS.hover}
                     }`
