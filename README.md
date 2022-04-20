@@ -35,7 +35,7 @@ current list of customisable properties.
 - cursor-outline-style (e.g solid, dotted)
 - cursor-outline-color (any valid CSS colour)
 - cursor-smoothing-position (Any value between 0 and 1 to be used in the lerp function, higher is more nimble and lower is less responsive)
-~~cursor-hovers (a classname which when hovered triggers an event)~~
+- cursor-hovers (a string of space-seperated classnames that trigger the hover event)
 
 Example for changing the background of the cursor and removing the outline:
 ```html
