@@ -176,14 +176,10 @@ class Cursor extends HTMLElement {
             previous: {
                 x: null,
                 y: null,
-                scrollX: 0,
-                scrollY: 0,
             },
             position: {
                 x: null,
                 y: null,
-                scrollX: 0,
-                scrollY: 0,
             },
         };
 
@@ -215,6 +211,8 @@ class Cursor extends HTMLElement {
 
         window.addEventListener("mousemove", (e) => this.move(e));
         window.requestAnimationFrame((e) => this.render(e));
+
+        this.updateCSS();
     }
 
     lerp(start, stop, amt) {
