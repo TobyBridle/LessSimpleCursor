@@ -203,6 +203,8 @@ class Cursor extends HTMLElement {
     
                     background-color: ${this.cursorAttributes["cursor-color"]};
                     outline: ${this.cursorAttributes["cursor-outline-thickness"]}px ${this.cursorAttributes["cursor-outline-style"]} ${this.cursorAttributes["cursor-outline-color"]}
+                
+                    pointer-events: none;
                 }
             `;
 
