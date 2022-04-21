@@ -213,7 +213,6 @@ class Cursor extends HTMLElement {
         this.hoverTarget = this;
         this.hoverClasses = [];
 
-        window.addEventListener("scroll", (e) => this.scroll(e));
         window.addEventListener("mousemove", (e) => this.move(e));
         window.requestAnimationFrame((e) => this.render(e));
     }
@@ -222,23 +221,11 @@ class Cursor extends HTMLElement {
         return (1 - amt) * start + amt * stop;
     }
 
-    scroll(e) {
-        this.cursor.previous.scrollX = this.cursor.position.scrollX || 0;
-        this.cursor.previous.scrollY = this.cursor.position.scrollY || 0;
-
-        this.cursor.position.scrollX = document.documentElement.scrollLeft;
-        this.cursor.position.scrollY = document.documentElement.scrollTop;
-
-        this.cursor.position.x +=
-            this.cursor.position.scrollX - this.cursor.previous.scrollX;
-        this.cursor.position.y +=
-            this.cursor.position.scrollY - this.cursor.previous.scrollY;
-
-        window.removeEventListener("scroll", this.scroll);
-    }
-
     move(e) {
-        [this.cursor.position.x, this.cursor.position.y] = [e.pageX, e.pageY];
+        [this.cursor.position.x, this.cursor.position.y] = [
+            e.clientX,
+            e.clientY,
+        ];
 
         this.hoverTarget = e.target;
 
