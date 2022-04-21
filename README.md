@@ -2,14 +2,14 @@
 Super Simple Cursor made to test the WebComponents feature
 
 ## CDN
-[jsDelivr minified cursor](https://cdn.jsdelivr.net/gh/TobyBridle/SuperSimpleCursor@d8d718eaadced480d10e8082fafc7fd1aa454097/cursor.min.js)
+[jsDelivr minified cursor](https://cdn.jsdelivr.net/gh/TobyBridle/SuperSimpleCursor@5f840478a6c3751365f368c36525f848baaba066/cursor.min.js)
 
 # How to use?
 You'll need to import the `cursor.min.js` using jsDelivr. This can be done with a script tag placed inside the `<head>`, as shown below:
 ```html
 ...
 <head>
-  <script src="https://cdn.jsdelivr.net/gh/TobyBridle/SuperSimpleCursor@d8d718eaadced480d10e8082fafc7fd1aa454097/cursor.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/TobyBridle/SuperSimpleCursor@5f840478a6c3751365f368c36525f848baaba066/cursor.min.js"></script>
 </head>
 ...
 ```
