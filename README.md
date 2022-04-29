@@ -14,7 +14,7 @@ You'll need to import the `cursor.min.js` using jsDelivr. This can be done with 
 ...
 ```
 
-To get the cursor to appear, just place a `<custom-cursor></custom-cursor>` element anywhere. A cool feature is
+To get the cursor to appear, just place a `<custom-cursor></custom-cursor>` element at the top of your `<body>` tag. A cool feature is
 that more than one cursor can be used per page, due to the fact that the script generates a unique ID (unless specified otherwise)
 for the classname of each cursor.
 
