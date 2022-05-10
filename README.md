@@ -2,14 +2,14 @@
 Super Simple Cursor made to test the WebComponents feature
 
 ## CDN
-[jsDelivr minified cursor](https://cdn.jsdelivr.net/gh/TobyBridle/SuperSimpleCursor@14dcb26a8e8e7ebf1f47d065d77e9658a659920d/cursor.min.js)
+[jsDelivr minified cursor](https://cdn.jsdelivr.net/gh/TobyBridle/SuperSimpleCursor@989b2ed125c61bd670c8d8ae6ce436889860bcc2/cursor.min.js)
 
 # How to use?
 You'll need to import the `cursor.min.js` using jsDelivr. This can be done with a script tag placed inside the `<head>`, as shown below:
 ```html
 ...
 <head>
-  <script src="https://cdn.jsdelivr.net/gh/TobyBridle/SuperSimpleCursor@14dcb26a8e8e7ebf1f47d065d77e9658a659920d/cursor.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/TobyBridle/SuperSimpleCursor@989b2ed125c61bd670c8d8ae6ce436889860bcc2/cursor.min.js"></script>
 </head>
 ...
 ```
@@ -33,6 +33,7 @@ current list of customisable properties.
 - cursor-outline-color (any valid CSS colour)
 - cursor-smoothing-position (Any value between 0 and 1 to be used in the lerp function, higher is more nimble and lower is less responsive)
 - cursor-hovers (a string of space-seperated classnames that trigger the hover event)
+- cursor-scroll-snap (Boolean value dictating whether or not scrolling lerps the cursor)
 
 Example for changing the background of the cursor and removing the outline:
 ```html
