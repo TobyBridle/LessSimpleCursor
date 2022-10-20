@@ -188,6 +188,9 @@ class Cursor extends HTMLElement {
             position: {
                 x: null,
                 y: null,
+                // If parent is of type "fixed", then the cursor will be fixed to the screen
+                // If parent is of type "relative", then the cursor will be fixed to the parent
+                type: this.parentElement?.style?.position ?? "relative",
             },
             scroll: {
                 x: null,
@@ -199,7 +202,7 @@ class Cursor extends HTMLElement {
 
         this.styles.textContent = `
                 .${this.hash} {
-                    position: absolute;
+                    position: ${this.cursor.position.type};
                     top: 0;
                     left: 0;
     
@@ -276,13 +279,10 @@ class Cursor extends HTMLElement {
         this.cursorElement.style.transform = `scale(${
             this.cursorAttributes.scale
         }) translate(${
-            this.cursor.previous.x * (1 / this.cursorAttributes.scale) -
-            ((1 / this.cursorAttributes.scale) * this.cursorAttributes.width) /
-                2
+            this.cursor.previous.x - (this.width * 1/this.cursorAttributes.scale) / 2
         }px, ${
-            this.cursor.previous.y * (1 / this.cursorAttributes.scale) -
-            ((1 / this.cursorAttributes.scale) * this.cursorAttributes.height) /
-                2
+            // offset by previous position and 50% of the real height
+            this.cursor.previous.y - (this.height * 1/this.cursorAttributes.scale) / 2
         }px)
 
         rotate(${this.hoverTarget.dataset?.cursorRotate || "0deg"})
@@ -397,7 +397,7 @@ class Cursor extends HTMLElement {
     updateCSS() {
         this.styles.textContent = `
                 .${this.hash} {
-                    position: fixed;
+                    position: ${this.cursor.position.type};
                     z-index: 999;
     
                     width: ${this.cursorAttributes.width}px;
